@@ -1,0 +1,36 @@
+--- 
+- 
+  become: true
+  hosts: webservers
+  name: "install metricbeat"
+  remote_user: ycadmin
+  tasks: 
+    - 
+      command: "curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.4.0-amd64.deb"
+      name: "download metricbeat deb"
+    - 
+      command: "dpkg -i metricbeat-7.4.0-amd64.deb"
+      name: "Install metricbeat deb"
+    - 
+      copy: 
+        dest: /etc/metricbeat/metricbeat.yml
+        src: /etc/ansible/files/metricbeat-config.yml
+      name: "copy metricbeat.yml"
+    - 
+      command: "metricbeat modules enable docker"
+      name: "enable and config system module"
+    - 
+      command: "metricbeat setup"
+      name: "setup metricbeat"
+    - 
+      command: "service metricbeat start"
+      name: "start metricbeat service"
+    - 
+      name: "enable service metricbeat on boot"
+      systemd: 
+        enabled: true
+        name: metricbeat
+
+
+
+
